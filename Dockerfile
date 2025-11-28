@@ -21,7 +21,7 @@ RUN npm run build -- --configuration production
 FROM nginx:alpine
 
 # Copiar archivos compilados de Angular
-COPY --from=build /app/dist/addventure-fronted/browser /usr/share/nginx/html
+COPY --from=build /app/dist/addventureFronted/browser /usr/share/nginx/html
 
 # Copiar configuración personalizada de Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
