@@ -1,8 +1,6 @@
 export const environment = {
   production: true,
-  // Cambiar estas URLs cuando despliegues a producción
-  // Ejemplo: apiUrl: 'https://api.addventure.com/api'
-  apiUrl: 'https://api.tudominio.com/api',
-  wsUrl: 'https://api.tudominio.com/ws',
-  baseUrl: 'https://api.tudominio.com'
+  apiUrl: 'http://18.207.239.154:8080/api',
+  wsUrl: 'ws://18.207.239.154:8080/ws',
+  baseUrl: 'http://18.207.239.154:8080'
 };
