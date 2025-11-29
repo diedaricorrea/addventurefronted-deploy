@@ -6,6 +6,7 @@ import { AuthService } from '../../../services/auth.service';
 import { HomeService } from '../../../services/home.service';
 import { NameFormatter } from '../../utils/name-formatter';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -17,6 +18,7 @@ import { Subscription } from 'rxjs';
 export class NavbarComponent implements OnInit, OnDestroy {
   @Input() homeData: HomeData | null = null;
   private homeDataSubscription?: Subscription;
+  protected readonly baseUrl = environment.baseUrl;
 
   constructor(
     private authService: AuthService,
