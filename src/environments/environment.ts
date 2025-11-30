@@ -1,6 +1,6 @@
 export const environment = {
-  production: false,
-  apiUrl: 'http://44.221.90.17:8080/api',
-  wsUrl: 'http://44.221.90.17:8080/ws',
-  baseUrl: 'http://44.221.90.17:8080'
+  production: true,
+  apiUrl: 'https://addventure.up.railway.app/api',
+  wsUrl: 'wss://addventure.up.railway.app/ws',
+  baseUrl: 'https://addventure.up.railway.app'
 };
