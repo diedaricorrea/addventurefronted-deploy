@@ -25,7 +25,43 @@
                         </a>
                     </div>
                     <h2 class="fs-4 fw-bold">Crea tu cuenta</h2>
-                    <p class="text-muted">Completa tus datos personales para comenzar</p>
+                    <p class="text-muted" id="step-description">
+                        @if (currentStep === 1) {
+                            Completa tus datos personales para comenzar
+                        } @else if (currentStep === 2) {
+                            Verifica tu correo electrónico
+                        } @else {
+                            ¡Registro completado!
+                        }
+                    </p>
+
+                    <!-- Indicador de pasos -->
+                    <div class="step-indicator">
+                        <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+                            <div class="step-circle">
+                                @if (currentStep > 1) {
+                                    <i class="fas fa-check"></i>
+                                } @else {
+                                    1
+                                }
+                            </div>
+                            <span class="step-text">Datos</span>
+                        </div>
+                        <div class="step" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+                            <div class="step-circle">
+                                @if (currentStep > 2) {
+                                    <i class="fas fa-check"></i>
+                                } @else {
+                                    2
+                                }
+                            </div>
+                            <span class="step-text">Email</span>
+                        </div>
+                        <div class="step" [class.active]="currentStep === 3">
+                            <div class="step-circle">3</div>
+                            <span class="step-text">Completado</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-body p-4">
@@ -33,182 +69,273 @@
                         <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
                     }
 
-                    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <label for="nombre" class="form-label">
-                                    <i class="fa-regular fa-user me-2"></i>Nombre
-                                    <span class="text-muted small ms-1">({{ registerForm.get('nombre')?.value?.length || 0 }}/50)</span>
-                                </label>
-                                <input type="text" class="form-control" id="nombre" placeholder="Ej: María Elena" maxlength="50"
-                                    formControlName="nombre"
-                                    [class.is-invalid]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
-                                @if (registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched) {
-                                    <div class="invalid-feedback">El nombre es obligatorio (mín. 2 caracteres)</div>
-                                }
-                            </div>
-                            <div class="col-md-6">
-                                <label for="apellido" class="form-label">
-                                    Apellido
-                                    <span class="text-muted small ms-1">({{ registerForm.get('apellido')?.value?.length || 0 }}/50)</span>
-                                </label>
-                                <input type="text" class="form-control" id="apellido" placeholder="Ej: García" maxlength="50"
-                                    formControlName="apellido"
-                                    [class.is-invalid]="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched">
-                                @if (registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched) {
-                                    <div class="invalid-feedback">El apellido es obligatorio (mín. 2 caracteres)</div>
-                                }
-                                <small class="form-text text-muted d-block mt-1">
-                                    Se mostrará como "María G." en la app
-                                </small>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="nombreUsuario" class="form-label">
-                                <i class="fa-regular fa-at me-2"></i>Nombre de usuario
-                            </label>
-                            <div class="username-input">
-                                <input type="text" class="form-control" id="nombreUsuario" placeholder="usuario_unico"
-                                    formControlName="nombreUsuario"
-                                    [class.is-invalid]="registerForm.get('nombreUsuario')?.invalid && registerForm.get('nombreUsuario')?.touched">
-                                <div class="username-status">
-                                    @if (usernameChecking) {
-                                        <span class="spinner-border spinner-border-sm text-primary"></span>
-                                    } @else if (usernameAvailable === true) {
-                                        <i class="fas fa-check-circle text-success"></i>
-                                    } @else if (usernameAvailable === false) {
-                                        <i class="fas fa-times-circle text-danger"></i>
+                    <!-- ==================== PASO 1: Información personal ==================== -->
+                    @if (currentStep === 1) {
+                        <form [formGroup]="registerForm" (ngSubmit)="goToStep2()">
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <label for="nombre" class="form-label">
+                                        <i class="fa-regular fa-user me-2"></i>Nombre
+                                        <span class="text-muted small ms-1">({{ registerForm.get('nombre')?.value?.length || 0 }}/50)</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="nombre" placeholder="Ej: María Elena" maxlength="50"
+                                        formControlName="nombre"
+                                        [class.is-invalid]="registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched">
+                                    @if (registerForm.get('nombre')?.invalid && registerForm.get('nombre')?.touched) {
+                                        <div class="invalid-feedback">El nombre es obligatorio (mín. 2 caracteres)</div>
                                     }
                                 </div>
-                            </div>
-                            @if (usernameAvailable === false) {
-                                <small class="text-danger">Este nombre de usuario ya está en uso.</small>
-                            }
-                            @if (registerForm.get('nombreUsuario')?.invalid && registerForm.get('nombreUsuario')?.touched) {
-                                <small class="text-danger">Usuario debe tener mín. 3 caracteres (solo letras, números y _)</small>
-                            }
-                            <small class="text-muted d-block">Este será tu identificador único en la plataforma</small>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <label for="pais" class="form-label">
-                                    <i class="bi bi-globe me-2"></i>País
-                                </label>
-                                <select class="form-select" id="pais" formControlName="pais">
-                                    <option value="Perú">Perú</option>
-                                    <option value="" disabled>Próximamente más países</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="ciudad" class="form-label">
-                                    <i class="bi bi-geo-alt me-2"></i>Ciudad
-                                </label>
-                                <input type="text" class="form-control" id="ciudad" placeholder="Tu ciudad"
-                                    formControlName="ciudad"
-                                    [class.is-invalid]="registerForm.get('ciudad')?.invalid && registerForm.get('ciudad')?.touched">
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="fechaNacimiento" class="form-label">
-                                <i class="fa-regular fa-calendar me-2"></i>Fecha de nacimiento
-                            </label>
-                            <input type="date" class="form-control" id="fechaNacimiento"
-                                formControlName="fechaNacimiento"
-                                [class.is-invalid]="registerForm.get('fechaNacimiento')?.invalid && registerForm.get('fechaNacimiento')?.touched">
-                            @if (registerForm.get('fechaNacimiento')?.hasError('underAge')) {
-                                <small class="text-danger d-block">Debes ser mayor de 18 años</small>
-                            }
-                            <small class="text-muted d-flex align-items-center mt-1">
-                                <i class="fas fa-exclamation-triangle text-warning me-1"></i>
-                                Debes ser mayor de 18 años para registrarte
-                            </small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                <i class="fa-regular fa-envelope me-2"></i>Email
-                            </label>
-                            <div class="input-group">
-                                <input type="email" class="form-control" id="email" placeholder="tu@email.com"
-                                    formControlName="email"
-                                    [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-                                <span class="input-group-text">
-                                    @if (emailChecking) {
-                                        <span class="spinner-border spinner-border-sm text-primary"></span>
-                                    } @else if (emailAvailable === true) {
-                                        <i class="fas fa-check-circle text-success"></i>
-                                    } @else if (emailAvailable === false) {
-                                        <i class="fas fa-times-circle text-danger"></i>
+                                <div class="col-md-6">
+                                    <label for="apellido" class="form-label">
+                                        Apellido
+                                        <span class="text-muted small ms-1">({{ registerForm.get('apellido')?.value?.length || 0 }}/50)</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="apellido" placeholder="Ej: García" maxlength="50"
+                                        formControlName="apellido"
+                                        [class.is-invalid]="registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched">
+                                    @if (registerForm.get('apellido')?.invalid && registerForm.get('apellido')?.touched) {
+                                        <div class="invalid-feedback">El apellido es obligatorio (mín. 2 caracteres)</div>
                                     }
-                                </span>
+                                    <small class="form-text text-muted d-block mt-1">
+                                        Se mostrará como "María G." en la app
+                                    </small>
+                                </div>
                             </div>
-                            @if (emailAvailable === false) {
-                                <small class="text-danger">Este correo ya está registrado.</small>
-                            }
+
+                            <div class="mb-3">
+                                <label for="nombreUsuario" class="form-label">
+                                    <i class="fa-regular fa-at me-2"></i>Nombre de usuario
+                                </label>
+                                <div class="username-input">
+                                    <input type="text" class="form-control" id="nombreUsuario" placeholder="usuario_unico"
+                                        formControlName="nombreUsuario"
+                                        [class.is-invalid]="registerForm.get('nombreUsuario')?.invalid && registerForm.get('nombreUsuario')?.touched">
+                                    <div class="username-status">
+                                        @if (usernameChecking) {
+                                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                                        } @else if (usernameAvailable === true) {
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        } @else if (usernameAvailable === false) {
+                                            <i class="fas fa-times-circle text-danger"></i>
+                                        }
+                                    </div>
+                                </div>
+                                @if (usernameAvailable === false) {
+                                    <small class="text-danger">Este nombre de usuario ya está en uso.</small>
+                                }
+                                @if (registerForm.get('nombreUsuario')?.invalid && registerForm.get('nombreUsuario')?.touched) {
+                                    <small class="text-danger">Usuario debe tener mín. 3 caracteres (solo letras, números y _)</small>
+                                }
+                                <small class="text-muted d-block">Este será tu identificador único en la plataforma</small>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3 mb-md-0">
+                                    <label for="pais" class="form-label">
+                                        <i class="bi bi-globe me-2"></i>País
+                                    </label>
+                                    <select class="form-select" id="pais" formControlName="pais">
+                                        <option value="Perú">Perú</option>
+                                        <option value="" disabled>Próximamente más países</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ciudad" class="form-label">
+                                        <i class="bi bi-geo-alt me-2"></i>Ciudad
+                                    </label>
+                                    <input type="text" class="form-control" id="ciudad" placeholder="Tu ciudad"
+                                        formControlName="ciudad"
+                                        [class.is-invalid]="registerForm.get('ciudad')?.invalid && registerForm.get('ciudad')?.touched">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="fechaNacimiento" class="form-label">
+                                    <i class="fa-regular fa-calendar me-2"></i>Fecha de nacimiento
+                                </label>
+                                <input type="date" class="form-control" id="fechaNacimiento"
+                                    formControlName="fechaNacimiento"
+                                    [class.is-invalid]="registerForm.get('fechaNacimiento')?.invalid && registerForm.get('fechaNacimiento')?.touched">
+                                @if (registerForm.get('fechaNacimiento')?.hasError('underAge')) {
+                                    <small class="text-danger d-block">Debes ser mayor de 18 años</small>
+                                }
+                                <small class="text-muted d-flex align-items-center mt-1">
+                                    <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                                    Debes ser mayor de 18 años para registrarte
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fa-regular fa-envelope me-2"></i>Email
+                                </label>
+                                <div class="input-group">
+                                    <input type="email" class="form-control" id="email" placeholder="tu@email.com"
+                                        formControlName="email"
+                                        [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                                    <span class="input-group-text">
+                                        @if (emailChecking) {
+                                            <span class="spinner-border spinner-border-sm text-primary"></span>
+                                        } @else if (emailAvailable === true) {
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        } @else if (emailAvailable === false) {
+                                            <i class="fas fa-times-circle text-danger"></i>
+                                        }
+                                    </span>
+                                </div>
+                                @if (emailAvailable === false) {
+                                    <small class="text-danger">Este correo ya está registrado.</small>
+                                }
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telefono" class="form-label">
+                                    <i class="bi bi-telephone me-2"></i>Número de teléfono
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text country-code">+51</span>
+                                    <input type="tel" class="form-control phone-input" id="telefono" placeholder="912 345 678"
+                                        formControlName="telefono"
+                                        [class.is-invalid]="registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched">
+                                </div>
+                                @if (registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched) {
+                                    <div class="text-danger small">Número inválido (debe tener 9 dígitos y empezar con 6, 7 o 9)</div>
+                                }
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-lock me-2"></i>Contraseña
+                                </label>
+                                <div class="input-group">
+                                    <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password"
+                                        placeholder="Mínimo 8 caracteres" formControlName="contrasena"
+                                        [class.is-invalid]="registerForm.get('contrasena')?.invalid && registerForm.get('contrasena')?.touched">
+                                    <button class="btn btn-outline-secondary" type="button" (click)="togglePassword('password')">
+                                        <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                                <div class="input-group">
+                                    <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" id="confirmPassword"
+                                        placeholder="Repite tu contraseña" formControlName="confirmContrasena"
+                                        [class.is-invalid]="registerForm.hasError('passwordMismatch') && registerForm.get('confirmContrasena')?.touched">
+                                    <button class="btn btn-outline-secondary" type="button" (click)="togglePassword('confirm')">
+                                        <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+                                    </button>
+                                </div>
+                                @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmContrasena')?.touched) {
+                                    <div class="text-danger small">Las contraseñas no coinciden</div>
+                                }
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mt-3"
+                                [disabled]="loading || registerForm.invalid || usernameAvailable === false || emailAvailable === false">
+                                @if (loading) {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Continuar
+                            </button>
+                        </form>
+                    }
+
+                    <!-- ==================== PASO 2: Verificación de email ==================== -->
+                    @if (currentStep === 2) {
+                        <div class="alert alert-info-custom mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="icon-circle me-2">
+                                    <i class="fas fa-envelope text-primary"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-medium">Verificación de email</h5>
+                                    <p class="mb-0 small">Paso 2 de 3</p>
+                                </div>
+                            </div>
+                            <p class="mb-0 small">
+                                Hemos enviado un código de verificación a <strong>{{ registerForm.get('email')?.value }}</strong>.
+                                Por favor, introduce el código para continuar con el registro.
+                            </p>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">
-                                <i class="bi bi-telephone me-2"></i>Número de teléfono
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text">+51</span>
-                                <input type="tel" class="form-control" id="telefono" placeholder="912 345 678"
-                                    formControlName="telefono"
-                                    [class.is-invalid]="registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched">
+                        <form [formGroup]="verificationForm" (ngSubmit)="verifyCode()">
+                            <div class="mb-3">
+                                <label for="emailCode" class="form-label">Código de verificación</label>
+                                <input type="text" class="form-control verification-code" id="emailCode"
+                                    placeholder="123456" maxlength="6" formControlName="code"
+                                    [class.is-invalid]="verificationForm.get('code')?.invalid && verificationForm.get('code')?.touched">
                             </div>
-                            @if (registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched) {
-                                <div class="text-danger small">Número inválido (debe tener 9 dígitos y empezar con 6, 7 o 9)</div>
-                            }
+
+                            <div class="text-center mb-3">
+                                <p class="small text-muted mb-2">¿No has recibido el código?</p>
+                                @if (resendCountdown > 0) {
+                                    <span class="small text-muted">Reenviar código ({{ resendCountdown }}s)</span>
+                                } @else {
+                                    <button type="button" class="btn btn-link p-0" (click)="resendCode()" [disabled]="loading">
+                                        Reenviar código
+                                    </button>
+                                }
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100" [disabled]="loading || verificationForm.invalid">
+                                @if (loading) {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Verificar email
+                            </button>
+                        </form>
+                    }
+
+                    <!-- ==================== PASO 3: Completado ==================== -->
+                    @if (currentStep === 3) {
+                        <div class="text-center mb-4">
+                            <div class="completion-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h2 class="fs-3 fw-bold mb-2">¡Verificación completada!</h2>
+                            <p class="text-muted">
+                                Tu cuenta ha sido verificada correctamente. Ahora puedes disfrutar de todas las
+                                funcionalidades de AddVenture.
+                            </p>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">
-                                <i class="bi bi-lock me-2"></i>Contraseña
-                            </label>
-                            <div class="input-group">
-                                <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password"
-                                    placeholder="Mínimo 8 caracteres" formControlName="contrasena"
-                                    [class.is-invalid]="registerForm.get('contrasena')?.invalid && registerForm.get('contrasena')?.touched">
-                                <button class="btn btn-outline-secondary" type="button" (click)="togglePassword('password')">
-                                    <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
-                                </button>
+                        <div class="alert alert-info-custom mb-4">
+                            <h5 class="fw-medium mb-2">Beneficios de tu cuenta verificada:</h5>
+                            <div class="benefit-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Unirte a grupos de viaje</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Crear tus propios grupos</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Chatear con otros viajeros</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Recibir reseñas para obtener la insignia de verificado</span>
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-                            <div class="input-group">
-                                <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" id="confirmPassword"
-                                    placeholder="Repite tu contraseña" formControlName="confirmContrasena"
-                                    [class.is-invalid]="registerForm.hasError('passwordMismatch') && registerForm.get('confirmContrasena')?.touched">
-                                <button class="btn btn-outline-secondary" type="button" (click)="togglePassword('confirm')">
-                                    <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
-                                </button>
-                            </div>
-                            @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmContrasena')?.touched) {
-                                <div class="text-danger small">Las contraseñas no coinciden</div>
-                            }
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 mt-3" [disabled]="loading || registerForm.invalid || !usernameAvailable || !emailAvailable">
-                            @if (loading) {
-                                <span class="spinner-border spinner-border-sm me-2"></span>
-                            }
-                            Crear cuenta
+                        <button type="button" class="btn btn-primary w-100" (click)="goToLogin()">
+                            Comenzar a explorar
                         </button>
-                    </form>
+                    }
                 </div>
 
-                <div class="card-footer bg-white text-center py-3 border-top-0">
-                    <p class="mb-0 small">
-                        ¿Ya tienes una cuenta?
-                        <a routerLink="/login" class="text-decoration-none fw-medium text-primary">Inicia sesión</a>
-                    </p>
-                </div>
+                <!-- Footer para el paso 1 -->
+                @if (currentStep === 1) {
+                    <div class="card-footer bg-white text-center py-3 border-top-0">
+                        <p class="mb-0 small">
+                            ¿Ya tienes una cuenta?
+                            <a routerLink="/login" class="text-decoration-none fw-medium text-primary">Inicia sesión</a>
+                        </p>
+                    </div>
+                }
             </div>
         </div>
     </div>
