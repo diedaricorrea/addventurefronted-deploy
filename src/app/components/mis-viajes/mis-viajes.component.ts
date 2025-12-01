@@ -123,8 +123,8 @@ export class MisViajesComponent implements OnInit {
       if (grupo.viaje.imagenDestacada.startsWith('http')) {
         return grupo.viaje.imagenDestacada;
       }
-      // Si es una ruta relativa, agregar baseUrl
-      return `${this.baseUrl}${grupo.viaje.imagenDestacada}`;
+      // Si es una ruta relativa, agregar baseUrl/uploads/
+      return `${this.baseUrl}/uploads/${grupo.viaje.imagenDestacada}`;
     }
     return `${this.baseUrl}/images/default-trip.jpg`;
   }

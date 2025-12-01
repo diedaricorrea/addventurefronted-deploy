@@ -93,4 +93,13 @@ export class GruposService {
   actualizarGrupo(id: number, datos: CrearGrupoDTO): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, datos);
   }
+
+  /**
+   * Subir imagen destacada para un grupo
+   */
+  subirImagenDestacada(idGrupo: number, imagen: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('imagen', imagen);
+    return this.http.post(`${this.apiUrl}/${idGrupo}/imagen-destacada`, formData);
+  }
 }

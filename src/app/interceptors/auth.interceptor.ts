@@ -11,9 +11,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   // Verificar si el token está expirado antes de enviarlo
   if (token && !authService.isAuthenticated()) {
-    // Token expirado, limpiar y redirigir
+    // Token expirado, limpiar y redirigir con mensaje
     authService.logout();
-    return throwError(() => new Error('Token expirado'));
+    router.navigate(['/login'], { queryParams: { sessionExpired: 'true' } });
+    return throwError(() => new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.'));
   }
 
   // Solo agregar token a peticiones a nuestra API
@@ -26,10 +27,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Si recibimos 401, el token es inválido
+        // Solo redirigir a login si es 401 (no autenticado)
+        // No redirigir en errores 400 (validación) u otros
         if (error.status === 401) {
           authService.logout();
-          router.navigate(['/login']);
+          router.navigate(['/login'], { queryParams: { sessionExpired: 'true' } });
         }
         return throwError(() => error);
       })

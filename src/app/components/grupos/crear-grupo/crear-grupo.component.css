@@ -362,4 +362,163 @@
   font-size: 14px;
 }
 
+/* ==================== Imagen destacada ==================== */
+.imagen-upload-area {
+  border: 2px dashed #dee2e6;
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.imagen-upload-area:hover {
+  border-color: #0d6efd;
+  background: linear-gradient(135deg, #f0f7ff 0%, #fff 100%);
+}
+
+/* Placeholder cuando no hay imagen */
+.imagen-placeholder {
+  padding: 2rem 1rem;
+  color: #6c757d;
+}
+
+.imagen-placeholder i {
+  font-size: 3.5rem;
+  color: #adb5bd;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.imagen-placeholder p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Container del preview */
+.imagen-preview-container {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+/* Imagen preview */
+.imagen-preview {
+  max-width: 100%;
+  max-height: 300px;
+  width: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease;
+}
+
+.imagen-preview-container:hover .imagen-preview {
+  transform: scale(1.02);
+}
+
+/* Botón eliminar imagen */
+.btn-remove-imagen {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(220, 53, 69, 0.9);
+  border: 3px solid white;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+}
+
+.btn-remove-imagen:hover {
+  background: #dc3545;
+  transform: scale(1.1);
+}
+
+.btn-remove-imagen i {
+  font-size: 1rem;
+}
+
+/* Nombre del archivo */
+.imagen-file-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, #d1e7dd 0%, #a3cfbb 100%);
+  border-radius: 25px;
+  font-size: 0.85rem;
+  color: #0f5132;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(25, 135, 84, 0.15);
+}
+
+.imagen-file-name i {
+  color: #198754;
+  font-size: 1rem;
+}
+
+.imagen-file-name span {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Input oculto */
+.imagen-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Botón seleccionar imagen */
+.btn-seleccionar-imagen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+  color: white;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+.btn-seleccionar-imagen:hover {
+  background: linear-gradient(135deg, #0b5ed7 0%, #0a58ca 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+  color: white;
+}
+
+/* Estado de error cuando no hay imagen */
+.imagen-upload-error {
+  border-color: #dc3545 !important;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff 100%) !important;
+}
+
+.imagen-upload-error .imagen-placeholder i {
+  color: #dc3545;
+}
+
+.imagen-upload-error .imagen-placeholder p {
+  color: #dc3545;
+}
+
 

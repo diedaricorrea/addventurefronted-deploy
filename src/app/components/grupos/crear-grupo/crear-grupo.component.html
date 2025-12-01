@@ -252,27 +252,51 @@
                 }
               </div>
 
-              <div class="mb-3">
-                <label for="imagenDestacada" class="form-label fw-medium">
-                  <i class="bi bi-upload me-1"></i> Imagen destacada (URL)
+              <div class="mb-4">
+                <label class="form-label fw-medium">
+                  <i class="bi bi-image me-1"></i> Imagen destacada *
                 </label>
-                <input
-                  type="url"
-                  class="form-control"
-                  id="imagenDestacada"
-                  formControlName="imagenDestacada"
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                  [class.is-invalid]="isFieldInvalid('imagenDestacada')"
-                />
-                <small class="text-muted">
+
+                <div class="imagen-upload-area" [class.imagen-upload-error]="submitted && !imagenPreview">
+                  <!-- Preview de imagen -->
+                  @if (imagenPreview) {
+                    <div class="imagen-preview-container">
+                      <img [src]="imagenPreview" alt="Preview" class="imagen-preview">
+                      <button type="button" class="btn-remove-imagen" (click)="eliminarImagen()" title="Eliminar imagen">
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                      @if (imagenFile) {
+                        <div class="imagen-file-name">
+                          <i class="bi bi-check-circle-fill"></i>
+                          <span>{{ imagenFile.name }}</span>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <div class="imagen-placeholder">
+                      <i class="bi bi-cloud-arrow-up"></i>
+                      <p>Arrastra una imagen o haz clic para seleccionar</p>
+                    </div>
+                  }
+
+                  <!-- Input de archivo oculto -->
+                  <input
+                    type="file"
+                    class="imagen-input-hidden"
+                    id="imagenDestacada"
+                    accept="image/*"
+                    (change)="onImagenSeleccionada($event)"
+                  />
+                  <label for="imagenDestacada" class="btn-seleccionar-imagen">
+                    <i class="bi bi-folder2-open me-2"></i>
+                    {{ imagenPreview ? 'Cambiar imagen' : 'Seleccionar imagen' }}
+                  </label>
+                </div>
+
+                <small class="text-muted d-block mt-2">
                   <i class="bi bi-info-circle me-1"></i>
-                  Opcional. Debe ser una URL válida que comience con http:// o https://
+                  Opcional. Formatos: JPG, PNG, GIF. Máximo 5MB.
                 </small>
-                @if (isFieldInvalid('imagenDestacada')) {
-                  <div class="invalid-feedback d-block">
-                    {{ getFieldError('imagenDestacada') }}
-                  </div>
-                }
               </div>
 
               <div class="d-flex justify-content-end">

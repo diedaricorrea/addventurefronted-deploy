@@ -192,7 +192,15 @@ export class GruposComponent implements OnInit {
   }
 
   getImagenDestacadaUrl(imagenDestacada: string | null | undefined): string {
-    return imagenDestacada || `${environment.baseUrl}/images/default-trip.jpg`;
+    if (!imagenDestacada) {
+      return `${environment.baseUrl}/images/default-trip.jpg`;
+    }
+    // Si es URL externa (comienza con http), devolverla tal cual
+    if (imagenDestacada.startsWith('http')) {
+      return imagenDestacada;
+    }
+    // Si es ruta local, construir URL completa
+    return `${environment.baseUrl}/uploads/${imagenDestacada}`;
   }
 
   formatDate(dateString: string): string {

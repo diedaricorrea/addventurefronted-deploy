@@ -36,10 +36,15 @@ export class LoginComponent implements OnInit {
     }
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    
+
     // Verificar mensajes de logout
     if (this.route.snapshot.queryParams['logout']) {
       this.successMessage = 'Has cerrado sesión correctamente';
+    }
+
+    // Verificar si la sesión expiró
+    if (this.route.snapshot.queryParams['sessionExpired']) {
+      this.errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
     }
 
     this.createForms();

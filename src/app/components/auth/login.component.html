@@ -19,7 +19,7 @@
             </a>
 
             <h1>Inicia sesión</h1>
-            
+
             <!-- Mensajes de error o éxito -->
             @if (errorMessage) {
                 <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
@@ -30,7 +30,7 @@
 
             <ul class="nav nav-tabs" id="loginTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link d-flex align-items-center" 
+                    <button class="nav-link d-flex align-items-center"
                             [class.active]="activeTab === 'email'"
                             (click)="switchTab('email')"
                             type="button">
@@ -51,13 +51,14 @@
 
             <div class="tab-content" id="loginTabsContent">
                 <!-- Email Login Tab -->
+                @if (emailLoginForm) {
                 <div class="tab-pane fade" [class.show]="activeTab === 'email'" [class.active]="activeTab === 'email'">
                     <form [formGroup]="emailLoginForm" (ngSubmit)="onSubmitEmail()">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" 
+                            <input type="email"
                                    formControlName="email"
-                                   class="form-control" 
+                                   class="form-control"
                                    id="email"
                                    placeholder="tu@email.com"
                                    [class.is-invalid]="emailLoginForm.get('email')?.invalid && emailLoginForm.get('email')?.touched">
@@ -74,9 +75,9 @@
                                 <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
                             </div>
                             <div class="position-relative">
-                                <input [type]="showPassword ? 'text' : 'password'" 
+                                <input [type]="showPassword ? 'text' : 'password'"
                                        formControlName="password"
-                                       class="form-control" 
+                                       class="form-control"
                                        id="password-email"
                                        placeholder="Tu contraseña"
                                        [class.is-invalid]="emailLoginForm.get('password')?.invalid && emailLoginForm.get('password')?.touched">
@@ -104,17 +105,19 @@
                         </button>
                     </form>
                 </div>
+                }
 
                 <!-- Phone Login Tab -->
+                @if (phoneLoginForm) {
                 <div class="tab-pane fade" [class.show]="activeTab === 'phone'" [class.active]="activeTab === 'phone'">
                     <form [formGroup]="phoneLoginForm" (ngSubmit)="onSubmitPhone()">
                         <div class="mb-3">
                             <label for="phone" class="form-label">Número de teléfono</label>
                             <div class="input-group">
                                 <span class="input-group-text">+51</span>
-                                <input type="tel" 
+                                <input type="tel"
                                        formControlName="phone"
-                                       class="form-control" 
+                                       class="form-control"
                                        id="phone"
                                        placeholder="912 345 678"
                                        [class.is-invalid]="phoneLoginForm.get('phone')?.invalid && phoneLoginForm.get('phone')?.touched">
@@ -132,9 +135,9 @@
                                 <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
                             </div>
                             <div class="position-relative">
-                                <input [type]="showPassword ? 'text' : 'password'" 
+                                <input [type]="showPassword ? 'text' : 'password'"
                                        formControlName="password"
-                                       class="form-control" 
+                                       class="form-control"
                                        id="password-phone"
                                        placeholder="Tu contraseña"
                                        [class.is-invalid]="phoneLoginForm.get('password')?.invalid && phoneLoginForm.get('password')?.touched">
@@ -162,6 +165,7 @@
                         </button>
                     </form>
                 </div>
+                }
             </div>
 
             <div class="register-link">

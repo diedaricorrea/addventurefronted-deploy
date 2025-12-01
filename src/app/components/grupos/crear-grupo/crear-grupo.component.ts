@@ -5,6 +5,7 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { GruposService } from '../../../services/grupos.service';
 import { ToastService } from '../../../services/toast.service';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
+import { environment } from '../../../../environments/environment';
 
 declare var L: any;
 
@@ -55,6 +56,10 @@ export class CrearGrupoComponent implements OnInit, AfterViewInit {
   minFechaInicio: string = '';
   minFechaFin: string = '';
 
+  // Imagen destacada
+  imagenFile: File | null = null;
+  imagenPreview: string | null = null;
+
   // Leaflet Map
   map: any;
   marker: any;
@@ -101,7 +106,6 @@ export class CrearGrupoComponent implements OnInit, AfterViewInit {
       fechaFin: ['', [Validators.required, this.validarFechaFin.bind(this)]],
       descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
       puntoEncuentro: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(500)]],
-      imagenDestacada: ['', Validators.pattern('^(https?://).*')],
       rangoEdadMin: [18, [Validators.required, Validators.min(18), Validators.max(80)]],
       rangoEdadMax: [60, [Validators.required, Validators.min(18), Validators.max(80)]],
       maxParticipantes: ['', [Validators.required, Validators.min(2), Validators.max(20)]],
@@ -137,11 +141,17 @@ export class CrearGrupoComponent implements OnInit, AfterViewInit {
           fechaFin: grupo.viaje?.fechaFin,
           descripcion: grupo.viaje?.descripcion,
           puntoEncuentro: grupo.viaje?.puntoEncuentro,
-          imagenDestacada: grupo.viaje?.imagenDestacada,
           rangoEdadMin: grupo.viaje?.rangoEdadMin || 18,
           rangoEdadMax: grupo.viaje?.rangoEdadMax || 60,
           maxParticipantes: grupo.maxParticipantes
         });
+
+        // Cargar preview de imagen existente si existe
+        if (grupo.viaje?.imagenDestacada) {
+          this.imagenPreview = grupo.viaje.imagenDestacada.startsWith('http')
+            ? grupo.viaje.imagenDestacada
+            : `${environment.baseUrl}/uploads/${grupo.viaje.imagenDestacada}`;
+        }
 
         // Cargar etiquetas
         if (grupo.etiquetas && grupo.etiquetas.length > 0) {
@@ -209,6 +219,7 @@ export class CrearGrupoComponent implements OnInit, AfterViewInit {
   // Validación
   validateInfoTab(silent = false): boolean {
     const form = this.grupoForm;
+    const hasImagen = this.imagenFile !== null || this.imagenPreview !== null;
     const isValid =
       form.get('nombreViaje')?.valid &&
       form.get('destinoPrincipal')?.valid &&
@@ -216,10 +227,15 @@ export class CrearGrupoComponent implements OnInit, AfterViewInit {
       form.get('fechaFin')?.valid &&
       form.get('maxParticipantes')?.valid &&
       form.get('descripcion')?.valid &&
-      this.tags.length > 0;
+      this.tags.length > 0 &&
+      hasImagen;
 
     if (!silent && !isValid) {
-      this.toastService.error('Por favor completa todos los campos obligatorios de información básica');
+      if (!hasImagen) {
+        this.toastService.error('Debes seleccionar una imagen destacada para el viaje');
+      } else {
+        this.toastService.error('Por favor completa todos los campos obligatorios de información básica');
+      }
     }
 
     return isValid || false;
@@ -469,6 +485,13 @@ export class CrearGrupoComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    // Validar imagen obligatoria (solo en creación o si no hay preview existente)
+    if (!this.imagenFile && !this.imagenPreview) {
+      this.toastService.error('Debes seleccionar una imagen destacada para el viaje');
+      this.currentTab = 'info';
+      return;
+    }
+
     // Validar fechas
     const fechaInicio = this.grupoForm.value.fechaInicio;
     const fechaFin = this.grupoForm.value.fechaFin;
@@ -522,16 +545,69 @@ export class CrearGrupoComponent implements OnInit, AfterViewInit {
 
     operacion.subscribe({
       next: (response: any) => {
-        this.toastService.success(
-          response.mensaje || (this.esEdicion ? 'Grupo actualizado exitosamente' : 'Grupo creado exitosamente')
-        );
-        this.router.navigate(['/mis-viajes']);
+        const idGrupo = response.idGrupo || this.idGrupo;
+
+        // Si hay imagen para subir, subirla después de crear/actualizar el grupo
+        if (this.imagenFile && idGrupo) {
+          this.gruposService.subirImagenDestacada(idGrupo, this.imagenFile).subscribe({
+            next: () => {
+              this.toastService.success(
+                response.mensaje || (this.esEdicion ? 'Grupo actualizado exitosamente' : 'Grupo creado exitosamente')
+              );
+              this.router.navigate(['/mis-viajes']);
+            },
+            error: (imgError: any) => {
+              // El grupo se creó pero falló la imagen
+              this.toastService.warning('Grupo guardado, pero hubo un error al subir la imagen');
+              this.router.navigate(['/mis-viajes']);
+            }
+          });
+        } else {
+          this.toastService.success(
+            response.mensaje || (this.esEdicion ? 'Grupo actualizado exitosamente' : 'Grupo creado exitosamente')
+          );
+          this.router.navigate(['/mis-viajes']);
+        }
       },
       error: (error: any) => {
         this.toastService.error(error.error?.error || 'Error al guardar el grupo');
         this.loading = false;
       }
     });
+  }
+
+  // Manejo de imagen destacada
+  onImagenSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+
+      // Validar tipo de archivo
+      if (!file.type.startsWith('image/')) {
+        this.toastService.error('El archivo debe ser una imagen');
+        return;
+      }
+
+      // Validar tamaño (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.toastService.error('La imagen no puede superar los 5MB');
+        return;
+      }
+
+      this.imagenFile = file;
+
+      // Crear preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagenPreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  eliminarImagen(): void {
+    this.imagenFile = null;
+    this.imagenPreview = null;
   }
 
   // Helpers

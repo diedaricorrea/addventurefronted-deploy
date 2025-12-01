@@ -106,12 +106,27 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Cargar testimonios destacados desde el backend
+  // Cargar testimonios aprobados desde el backend
   loadTestimoniosDestacados(): void {
+    // Primero intentamos cargar destacados, si no hay, cargamos aprobados
     this.testimonioService.getTestimoniosDestacados(6).subscribe({
       next: (testimonios) => {
-        this.testimoniosDestacados = testimonios;
-        this.loadingTestimonios = false;
+        if (testimonios.length > 0) {
+          this.testimoniosDestacados = testimonios;
+          this.loadingTestimonios = false;
+        } else {
+          // Si no hay destacados, cargar aprobados
+          this.testimonioService.getTestimoniosAprobados(6).subscribe({
+            next: (aprobados) => {
+              this.testimoniosDestacados = aprobados;
+              this.loadingTestimonios = false;
+            },
+            error: (err) => {
+              console.error('Error al cargar testimonios aprobados:', err);
+              this.loadingTestimonios = false;
+            }
+          });
+        }
       },
       error: (err) => {
         console.error('Error al cargar testimonios destacados:', err);
@@ -159,6 +174,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   getImageUrl(imagen: string | null | undefined): string {
     if (!imagen) return `${environment.baseUrl}/images/default-trip.jpg`;
     if (imagen.startsWith('http://') || imagen.startsWith('https://')) return imagen;
+    // Si es ruta local, agregar /uploads/
+    if (!imagen.startsWith('/')) {
+      return `${environment.baseUrl}/uploads/${imagen}`;
+    }
     return `${environment.baseUrl}${imagen}`;
   }
 
