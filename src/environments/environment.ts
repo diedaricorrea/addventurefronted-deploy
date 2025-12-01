@@ -1,6 +1,6 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://addventure.up.railway.app/api',
-  wsUrl: 'https://addventure.up.railway.app/ws', // <--  wss a https capaz se arregla :v
-  baseUrl: 'https://addventure.up.railway.app'
+  production: false,
+  apiUrl: 'http://localhost:8080/api',   // backend local
+  wsUrl: 'http://localhost:8080/ws',     // websockets local
+  baseUrl: 'http://localhost:8080'
 };
