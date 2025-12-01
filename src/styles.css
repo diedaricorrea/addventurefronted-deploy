@@ -401,40 +401,159 @@ footer {
 }
 
 /* Fix for the steps and security icons */
+/* Blue */
 .bg-blue-600 {
     background-color: #2563eb;
-}
-
-.bg-green-600 {
-    background-color: #059669;
-}
-
-.bg-purple-600 {
-    background-color: #7c3aed;
-}
-
-.bg-orange-600 {
-    background-color: #ea580c;
 }
 
 .bg-blue-500 {
     background-color: #3b82f6;
 }
 
+.bg-blue-100 {
+    background-color: #dbeafe;
+}
+
+.bg-blue-50 {
+    background-color: #eff6ff;
+}
+
+.border-blue-100 {
+    border-color: #dbeafe !important;
+}
+
+.text-blue {
+    color: #2563eb;
+}
+
+/* Green */
+.bg-green-600 {
+    background-color: #059669;
+}
+
 .bg-green-500 {
     background-color: #10b981;
 }
 
-.bg-yellow-500 {
-    background-color: #f59e0b;
+.bg-green-100 {
+    background-color: #d1fae5;
+}
+
+.bg-green-50 {
+    background-color: #ecfdf5;
+}
+
+.border-green-100 {
+    border-color: #d1fae5 !important;
+}
+
+.text-green {
+    color: #059669;
+}
+
+/* Purple */
+.bg-purple-600 {
+    background-color: #7c3aed;
+}
+
+.bg-purple-500 {
+    background-color: #8b5cf6;
+}
+
+.bg-purple-100 {
+    background-color: #ede9fe;
+}
+
+.bg-purple-50 {
+    background-color: #f5f3ff;
+}
+
+.border-purple-100 {
+    border-color: #ede9fe !important;
 }
 
 .text-purple {
-    color: #8b5cf6;
+    color: #7c3aed;
+}
+
+/* Orange */
+.bg-orange-600 {
+    background-color: #ea580c;
+}
+
+.bg-orange-500 {
+    background-color: #f97316;
+}
+
+.bg-orange-100 {
+    background-color: #ffedd5;
+}
+
+.bg-orange-50 {
+    background-color: #fff7ed;
+}
+
+.border-orange-100 {
+    border-color: #ffedd5 !important;
 }
 
 .text-orange {
-    color: #f97316;
+    color: #ea580c;
+}
+
+/* Pink */
+.bg-pink-600 {
+    background-color: #db2777;
+}
+
+.bg-pink-500 {
+    background-color: #ec4899;
+}
+
+.bg-pink-100 {
+    background-color: #fce7f3;
+}
+
+.bg-pink-50 {
+    background-color: #fdf2f8;
+}
+
+.border-pink-100 {
+    border-color: #fce7f3 !important;
+}
+
+.text-pink {
+    color: #db2777;
+}
+
+/* Indigo */
+.bg-indigo-600 {
+    background-color: #4f46e5;
+}
+
+.bg-indigo-500 {
+    background-color: #6366f1;
+}
+
+.bg-indigo-100 {
+    background-color: #e0e7ff;
+}
+
+.bg-indigo-50 {
+    background-color: #eef2ff;
+}
+
+.border-indigo-100 {
+    border-color: #e0e7ff !important;
+}
+
+.text-indigo {
+    color: #4f46e5;
+}
+
+/* Yellow */
+.bg-yellow-500 {
+    background-color: #f59e0b;
 }
 
 @media (max-width: 768px) {

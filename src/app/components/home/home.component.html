@@ -231,9 +231,9 @@
 </section>
 
 <!-- Testimonials Section -->
-<section id="testimonios" class="py-5 bg-gradient-to-b from-blue-50 to-white">
+<section id="testimonios" class="py-5" style="background: linear-gradient(to bottom, #eff6ff, #ffffff);">
     <div class="container py-4">
-        <div class="text-center mb-5 fade-in">
+        <div class="text-center mb-5">
             <h2 class="display-6 fw-bold mb-3">Testimonios de nuestros viajeros</h2>
             <p class="lead text-muted mx-auto" style="max-width: 700px;">
                 Conecta con experiencias reales de quienes ya vivieron la aventura.<br>
@@ -242,61 +242,77 @@
         </div>
 
         <!-- Loading state -->
-        <div *ngIf="loadingTestimonios" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Cargando testimonios...</span>
-            </div>
-        </div>
-
-        <!-- Testimonios dinámicos -->
-        <div *ngIf="!loadingTestimonios && testimoniosDestacados.length > 0" class="row g-4">
-            <div *ngFor="let testimonio of testimoniosDestacados; let i = index"
-                 class="col-md-4 fade-in"
-                 [attr.data-delay]="(i + 1) * 200">
-                <div class="testimonial-card h-100"
-                     [ngClass]="'bg-' + getTestimonioColor(i) + '-50 border border-' + getTestimonioColor(i) + '-100'">
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="testimonial-avatar me-3">
-                            <!-- Foto de perfil si existe y no es anónimo -->
-                            <img *ngIf="!testimonio.anonimo && testimonio.fotoPerfilAutor"
-                                 [src]="getTestimonioFotoUrl(testimonio.fotoPerfilAutor)"
-                                 [alt]="getTestimonioNombre(testimonio)"
-                                 class="img-fluid">
-                            <!-- Iniciales si no hay foto -->
-                            <div *ngIf="testimonio.anonimo || !testimonio.fotoPerfilAutor"
-                                 class="avatar-circle text-white"
-                                 [ngClass]="'bg-' + getTestimonioColor(i) + '-500'">
-                                {{ getTestimonioIniciales(testimonio) }}
-                            </div>
-                        </div>
-                        <div>
-                            <h5 class="mb-0" [ngClass]="'text-' + getTestimonioColor(i)">
-                                {{ getTestimonioNombre(testimonio) }}
-                            </h5>
-                            <p class="small text-muted mb-0">Desde {{ getTestimonioUbicacion(testimonio) }}</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-3 rounded mb-3 border">
-                        <p class="fst-italic text-muted mb-0">
-                            "{{ testimonio.comentario }}"
-                        </p>
-                    </div>
-                    <div class="text-center text-warning">
-                        <i *ngFor="let filled of getEstrellas(testimonio.calificacion)"
-                           [class]="filled ? 'fas fa-star' : 'far fa-star'"></i>
-                    </div>
+        @if (loadingTestimonios) {
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando testimonios...</span>
                 </div>
             </div>
-        </div>
+        }
+
+        <!-- Testimonios dinámicos -->
+        @if (!loadingTestimonios && testimoniosDestacados.length > 0) {
+            <div class="row g-4">
+                @for (testimonio of testimoniosDestacados; track testimonio.idTestimonio; let i = $index) {
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm border-0"
+                             style="border-radius: 12px; overflow: hidden;"
+                             [ngStyle]="{'background-color': getTestimonioBgColor(i), 'border': '1px solid ' + getTestimonioBorderColor(i) + ' !important'}">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <!-- Avatar -->
+                                    <div class="me-3" style="width: 56px; height: 56px; border-radius: 50%; overflow: hidden; flex-shrink: 0;">
+                                        @if (!testimonio.anonimo && testimonio.fotoPerfilAutor) {
+                                            <img [src]="getTestimonioFotoUrl(testimonio.fotoPerfilAutor)"
+                                                 [alt]="getTestimonioNombre(testimonio)"
+                                                 style="width: 100%; height: 100%; object-fit: cover;">
+                                        } @else {
+                                            <div class="d-flex align-items-center justify-content-center text-white fw-bold"
+                                                 style="width: 100%; height: 100%; font-size: 1.2rem;"
+                                                 [ngStyle]="{'background-color': getTestimonioAvatarColor(i)}">
+                                                {{ getTestimonioIniciales(testimonio) }}
+                                            </div>
+                                        }
+                                    </div>
+                                    <!-- Nombre y ubicación -->
+                                    <div>
+                                        <h6 class="mb-0 fw-bold" [ngStyle]="{'color': getTestimonioTextColor(i)}">
+                                            {{ getTestimonioNombre(testimonio) }}
+                                        </h6>
+                                        <small class="text-muted">Desde {{ getTestimonioUbicacion(testimonio) }}</small>
+                                    </div>
+                                </div>
+                                <!-- Comentario -->
+                                <div class="bg-white p-3 rounded mb-3" style="border: 1px solid #e5e7eb;">
+                                    <p class="fst-italic text-secondary mb-0" style="font-size: 0.95rem;">
+                                        "{{ testimonio.comentario }}"
+                                    </p>
+                                </div>
+                                <!-- Estrellas -->
+                                <div class="text-center">
+                                    @for (filled of getEstrellas(testimonio.calificacion); track $index) {
+                                        <span style="color: #fbbf24;">
+                                            <i [class]="filled ? 'fas fa-star' : 'far fa-star'"></i>
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
 
         <!-- Sin testimonios -->
-        <div *ngIf="!loadingTestimonios && testimoniosDestacados.length === 0" class="text-center py-5">
-            <i class="bi bi-chat-quote fs-1 text-muted"></i>
-            <p class="text-muted mt-3">
-                Aún no hay testimonios destacados.<br>
-                ¡Sé el primero en compartir tu experiencia!
-            </p>
-        </div>
+        @if (!loadingTestimonios && testimoniosDestacados.length === 0) {
+            <div class="text-center py-5">
+                <i class="bi bi-chat-quote fs-1 text-muted"></i>
+                <p class="text-muted mt-3">
+                    Aún no hay testimonios destacados.<br>
+                    ¡Sé el primero en compartir tu experiencia!
+                </p>
+            </div>
+        }
     </div>
 </section>
 

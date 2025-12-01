@@ -266,7 +266,33 @@ export class HomeComponent implements OnInit, OnDestroy {
     return Array(5).fill(false).map((_, i) => i < calificacion);
   }
 
-  // Obtener color del testimonio según índice
+  // Colores para testimonios (valores hexadecimales directos)
+  private testimonioColores = [
+    { bg: '#eff6ff', border: '#dbeafe', avatar: '#3b82f6', text: '#2563eb' }, // blue
+    { bg: '#ecfdf5', border: '#d1fae5', avatar: '#10b981', text: '#059669' }, // green
+    { bg: '#f5f3ff', border: '#ede9fe', avatar: '#8b5cf6', text: '#7c3aed' }, // purple
+    { bg: '#fff7ed', border: '#ffedd5', avatar: '#f97316', text: '#ea580c' }, // orange
+    { bg: '#fdf2f8', border: '#fce7f3', avatar: '#ec4899', text: '#db2777' }, // pink
+    { bg: '#eef2ff', border: '#e0e7ff', avatar: '#6366f1', text: '#4f46e5' }, // indigo
+  ];
+
+  getTestimonioBgColor(index: number): string {
+    return this.testimonioColores[index % this.testimonioColores.length].bg;
+  }
+
+  getTestimonioBorderColor(index: number): string {
+    return this.testimonioColores[index % this.testimonioColores.length].border;
+  }
+
+  getTestimonioAvatarColor(index: number): string {
+    return this.testimonioColores[index % this.testimonioColores.length].avatar;
+  }
+
+  getTestimonioTextColor(index: number): string {
+    return this.testimonioColores[index % this.testimonioColores.length].text;
+  }
+
+  // Obtener color del testimonio según índice (legacy)
   getTestimonioColor(index: number): string {
     const colores = ['blue', 'green', 'purple', 'orange', 'pink', 'indigo'];
     return colores[index % colores.length];
